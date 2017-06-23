@@ -10,22 +10,25 @@ import UIKit
 import FBSDKCoreKit
 import FBSDKLoginKit
 import Firebase
+import SwiftKeychainWrapper
 
 class SignInVC: UIViewController {
     
     @IBOutlet weak var emailField: FancyField!
     @IBOutlet weak var passwordField: FancyField!
-
+    
     override func viewDidLoad() {
         super.viewDidLoad()
-        // Do any additional setup after loading the view, typically from a nib.
+        
     }
-
-    override func didReceiveMemoryWarning() {
-        super.didReceiveMemoryWarning()
-        // Dispose of any resources that can be recreated.
+    
+    override func viewDidAppear(_ animated: Bool) {
+        if let _ = KeychainWrapper.standard.string(forKey: KEY_UID) {
+            print("JAKE: ID found in keychain")
+            performSegue(withIdentifier: "goToFeed", sender: nil)
+        }
     }
-
+    
     @IBAction func facebookBtnTapped(_ sender: Any) {
         
         let facebookLogin = FBSDKLoginManager()
@@ -50,22 +53,31 @@ class SignInVC: UIViewController {
                 print("JAKE: unable to auth with fbase - \(String(describing: error))")
             } else {
                 print("JAKE: successful fbase auth")
+                if let user = user {
+                    self.completeSignIn(id: user.uid)
+                }
             }
         }
     }
-
+     
     @IBAction func signInTapped(_ sender: Any) {
         
         if let email = emailField.text, let password = passwordField.text {
             Auth.auth().signIn(withEmail: email, password: password, completion: { (user, error) in
                 if error == nil {
                     print("JAKE: Successful fbase email auth")
+                    if let user = user {
+                        self.completeSignIn(id: user.uid)
+                    }
                 } else {
                     Auth.auth().createUser(withEmail: email, password: password, completion: { (user, error) in
                         if error != nil {
-                            print("JAKE: Unable to email fbase auth")
+                            print("JAKE: Unable to email fbase auth \(String(describing: error))")
                         } else {
                             print("JAKE: Successful auth with created fbase email")
+                            if let user = user {
+                                self.completeSignIn(id: user.uid)
+                            }
                         }
                     })
                 }
@@ -73,6 +85,15 @@ class SignInVC: UIViewController {
         }
         
     }
+    
+    func completeSignIn(id: String) {
+        
+        let keychainResult = KeychainWrapper.standard.set(id, forKey: KEY_UID) //setString(user.uid, forKey: KEY_UID)
+        print("JAKE: Data saved to keychain \(keychainResult)")
+        performSegue(withIdentifier: "goToFeed", sender: nil)
+        
+    }
+    
 }
 
 
