@@ -12,6 +12,9 @@ import FBSDKLoginKit
 import Firebase
 
 class SignInVC: UIViewController {
+    
+    @IBOutlet weak var emailField: FancyField!
+    @IBOutlet weak var passwordField: FancyField!
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -29,7 +32,7 @@ class SignInVC: UIViewController {
         
         facebookLogin.logIn(withReadPermissions: ["email"], from: self) { (result, error) in
             if error != nil {
-                print("JAKE: Unable to facebook auth - \(error)")
+                print("JAKE: Unable to facebook auth - \(String(describing: error))")
             } else if result?.isCancelled == true {
                 print("JAKE: User cancelled facebook auth")
             } else {
@@ -44,12 +47,61 @@ class SignInVC: UIViewController {
     func firebaseAuth(_ credential: AuthCredential) {
         Auth.auth().signIn(with: credential) { (user, error) in
             if error != nil {
-                print("JAKE: unable to auth with fbase - \(error)")
+                print("JAKE: unable to auth with fbase - \(String(describing: error))")
             } else {
                 print("JAKE: successful fbase auth")
             }
         }
     }
 
+    @IBAction func signInTapped(_ sender: Any) {
+        
+        if let email = emailField.text, let password = passwordField.text {
+            Auth.auth().signIn(withEmail: email, password: password, completion: { (user, error) in
+                if error == nil {
+                    print("JAKE: Successful fbase email auth")
+                } else {
+                    Auth.auth().createUser(withEmail: email, password: password, completion: { (user, error) in
+                        if error != nil {
+                            print("JAKE: Unable to email fbase auth")
+                        } else {
+                            print("JAKE: Successful auth with created fbase email")
+                        }
+                    })
+                }
+            })
+        }
+        
+    }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
