@@ -35,7 +35,7 @@ class FeedVC: UIViewController,UITableViewDelegate, UITableViewDataSource, UIIma
         DataService.ds.REF_POSTS.observe(.value, with: { (snapshot) in
             
             self.posts = []
-        
+            
             if let snapshot = snapshot.children.allObjects as? [DataSnapshot] {
                 for snap in snapshot {
                     print("SNAP: \(snap)")
@@ -46,7 +46,7 @@ class FeedVC: UIViewController,UITableViewDelegate, UITableViewDataSource, UIIma
                     }
                 }
             }
-          self.tableView.reloadData()
+            self.tableView.reloadData()
         })
     }
     
@@ -63,7 +63,7 @@ class FeedVC: UIViewController,UITableViewDelegate, UITableViewDataSource, UIIma
         let post = posts[indexPath.row]
         
         if let cell = tableView.dequeueReusableCell(withIdentifier: "PostCell") as? PostCell {
-                        
+            
             if let image = FeedVC.imageCache.object(forKey: post.imageUrl as NSString) {
                 cell.configureCell(post: post, image: image)
                 return cell
@@ -87,7 +87,7 @@ class FeedVC: UIViewController,UITableViewDelegate, UITableViewDataSource, UIIma
         }
         imagePicker.dismiss(animated: true, completion: nil)
     }
-
+    
     @IBAction func addImageTapped(_ sender: Any) {
         present(imagePicker, animated: true, completion: nil)
     }
@@ -115,10 +115,31 @@ class FeedVC: UIViewController,UITableViewDelegate, UITableViewDataSource, UIIma
                 } else {
                     print("JAKE: successful upload image to storage")
                     let downloadUrl = metaData?.downloadURL()?.absoluteString
+                    if let url = downloadUrl {
+                        self.postToFirebase(imageUrl: url)
+                    }
                 }
             }
         }
         
+    }
+    
+    func postToFirebase(imageUrl: String) {
+        
+        let post: Dictionary<String, Any> = [
+            "caption": captionField.text!,
+            "imageUrl": imageUrl,
+            "likes": 0
+        ]
+        
+        let firebasePost = DataService.ds.REF_POSTS.childByAutoId()
+        firebasePost.setValue(post)
+        
+        captionField.text = ""
+        imageSelected = false
+        imageAdd.image = UIImage(named: "add-image")
+        
+        tableView.reloadData()
     }
     
     
