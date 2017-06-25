@@ -269,7 +269,7 @@
                                                                 <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="placeholder" translatesAutoresizingMaskIntoConstraints="NO" id="Jm9-Jn-lao">
                                                                     <rect key="frame" x="0.0" y="68" width="327" height="154.5"/>
                                                                 </imageView>
-                                                                <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" textAlignment="natural" translatesAutoresizingMaskIntoConstraints="NO" id="d4h-GF-3L1">
+                                                                <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" editable="NO" textAlignment="natural" translatesAutoresizingMaskIntoConstraints="NO" id="d4h-GF-3L1">
                                                                     <rect key="frame" x="0.0" y="230.5" width="327" height="50"/>
                                                                     <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                                                     <constraints>
@@ -320,6 +320,7 @@
                                         </tableViewCellContentView>
                                         <connections>
                                             <outlet property="caption" destination="d4h-GF-3L1" id="mwo-C5-cJ2"/>
+                                            <outlet property="likeImage" destination="X2U-Y7-Ota" id="d80-Vk-Xtf"/>
                                             <outlet property="likesLbl" destination="Q4f-Lu-9tP" id="dpE-tx-xwh"/>
                                             <outlet property="postImg" destination="Jm9-Jn-lao" id="tBg-UP-ifj"/>
                                             <outlet property="profileImg" destination="ODo-L9-SGN" id="UZL-ub-MWL"/>
