@@ -182,9 +182,9 @@
                                     <stackView opaque="NO" contentMode="scaleToFill" spacing="10" translatesAutoresizingMaskIntoConstraints="NO" id="0Yn-c2-R46">
                                         <rect key="frame" x="8" y="8" width="327" height="49"/>
                                         <subviews>
-                                            <imageView contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="add-image" translatesAutoresizingMaskIntoConstraints="NO" id="ImR-79-n2J" customClass="CircleView" customModule="Social" customModuleProvider="target">
+                                            <imageView contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="add-image" translatesAutoresizingMaskIntoConstraints="NO" id="ImR-79-n2J" customClass="CircleView" customModule="Social" customModuleProvider="target">
                                                 <rect key="frame" x="0.0" y="0.0" width="49" height="49"/>
-                                                <color key="backgroundColor" red="0.22748769819736481" green="0.51696932315826416" blue="0.56086385250091553" alpha="1" colorSpace="custom" customColorSpace="displayP3"/>
+                                                <color key="backgroundColor" red="0.22745098039215686" green="0.51764705882352935" blue="0.5607843137254902" alpha="1" colorSpace="custom" customColorSpace="displayP3"/>
                                                 <gestureRecognizers/>
                                                 <constraints>
                                                     <constraint firstAttribute="width" constant="49" id="386-1C-jq7"/>
@@ -208,6 +208,9 @@
                                                     <constraint firstAttribute="width" constant="49" id="eDu-jq-gwD"/>
                                                 </constraints>
                                                 <state key="normal" image="add-post"/>
+                                                <connections>
+                                                    <action selector="postButtonTapped:" destination="aLA-45-HOH" eventType="touchUpInside" id="X6m-LL-6Zp"/>
+                                                </connections>
                                             </button>
                                         </subviews>
                                     </stackView>
@@ -341,6 +344,7 @@
                         </constraints>
                     </view>
                     <connections>
+                        <outlet property="captionField" destination="TuU-Lg-g0v" id="Z6z-xQ-kyb"/>
                         <outlet property="imageAdd" destination="ImR-79-n2J" id="0Ae-uf-4JA"/>
                         <outlet property="tableView" destination="w1c-3x-Uuj" id="beU-P8-Wnr"/>
                         <segue destination="BYZ-38-t0r" kind="show" identifier="goToSignIn" id="yZd-P8-ALp"/>

@@ -11,7 +11,8 @@ import SwiftKeychainWrapper
 import Firebase
 
 class FeedVC: UIViewController,UITableViewDelegate, UITableViewDataSource, UIImagePickerControllerDelegate, UINavigationControllerDelegate {
-
+    
+    @IBOutlet weak var captionField: FancyField!
     @IBOutlet weak var tableView: UITableView!
     @IBOutlet weak var imageAdd: CircleView!
     
@@ -19,6 +20,7 @@ class FeedVC: UIViewController,UITableViewDelegate, UITableViewDataSource, UIIma
     var posts = [Post]()
     var imagePicker: UIImagePickerController!
     static var imageCache: NSCache<NSString, UIImage> = NSCache()
+    var imageSelected = false
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -76,8 +78,9 @@ class FeedVC: UIViewController,UITableViewDelegate, UITableViewDataSource, UIIma
     
     func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [String : Any]) {
         if let image = info[UIImagePickerControllerEditedImage] as? UIImage {
-            imageAdd.contentMode = .scaleAspectFit
+            imageAdd.contentMode = .scaleAspectFill
             imageAdd.image = image
+            imageSelected = true
             
         } else {
             print("JAKE: Valid image not selected")
@@ -89,10 +92,39 @@ class FeedVC: UIViewController,UITableViewDelegate, UITableViewDataSource, UIIma
         present(imagePicker, animated: true, completion: nil)
     }
     
+    @IBAction func postButtonTapped(_ sender: Any) {
+        
+        guard let caption = captionField.text, caption != "" else {
+            print("JAKE: caption must be entered")
+            return
+        }
+        guard let image = imageAdd.image, imageSelected == true else {
+            print("JAKE: image must be selected")
+            return
+        }
+        
+        if let imageData = UIImageJPEGRepresentation(image, 0.2) {
+            
+            let imageUid = NSUUID().uuidString
+            let metaData = StorageMetadata()
+            metaData.contentType = "image/jpeg"
+            
+            DataService.ds.REF_POST_IMAGES.child(imageUid).putData(imageData, metadata: metaData) { (metaData, error) in
+                if error != nil {
+                    print("JAKE: unable to upload image to storage")
+                } else {
+                    print("JAKE: successful upload image to storage")
+                    let downloadUrl = metaData?.downloadURL()?.absoluteString
+                }
+            }
+        }
+        
+    }
+    
     
     @IBAction func signOutTapped(_ sender: UIButton) {
         
-        let keychainResult = KeychainWrapper.standard.remove(key: KEY_UID)
+        let keychainResult = KeychainWrapper.standard.removeObject(forKey: KEY_UID)
         print("JAKE: ID removed from keychain: \(keychainResult)")
         try! Auth.auth().signOut()
         performSegue(withIdentifier: "goToSignIn", sender: nil)
